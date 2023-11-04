@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Дерево</title>
+		<style>
+			.tree {
+			font-family: Arial, sans-serif;
+			}
+			.branch {
+			margin-left: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="tree">
+			<ul>
+				<li>
+					Корень
+					<ul class="branch">
+						<li>
+							Ветвь 1
+							<ul class="branch">
+								<li>Подветвь 1</li>
+								<li>Подветвь 2</li>
+							</ul>
+						</li>
+						<li>
+							Ветвь 2
+							<ul class="branch">
+								<li>Подветвь 3</li>
+							</ul>
+						</li>
+						<li>Ветвь 3</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>
