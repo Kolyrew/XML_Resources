@@ -98,9 +98,38 @@ public:
             }
         }
     };
+
+    Iterator find(const std::string& name) {
+        XMLResource::Iterator it(*this);
+        while (it.hasNext()) {
+            if (it.getCurrentElement().find("<" + name) != std::string::npos) {
+                return it;
+            }
+            it.next();
+        }
+        return it;
+    }
+
+    bool add(const std::string& element, XMLResource::Iterator position) {
+        size_t pos = xml_data.find(position.getCurrentElement());
+        if (pos != std::string::npos) {
+            xml_data.insert(pos, element);
+            return true;
+        }
+        return false; 
+    }
+
+    bool erase(XMLResource::Iterator position) {
+        size_t pos = xml_data.find(position.getCurrentElement());
+        if (pos != std::string::npos) {
+            xml_data.erase(pos, position.getCurrentElement().size());
+            return true;
+        }
+        return false; 
+    }
 };
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     try {
         auto resource = XMLResource::create();
 
@@ -108,7 +137,7 @@ int main(int argc, char* argv[]) {
             std::cout << "XML loaded successfully" << std::endl;
         }
         else {
-            std::cout << "Error while loading XML" << std::endl;
+            std::cerr << "Error while loading XML" << std::endl;
             return EXIT_FAILURE;
         }
 
@@ -116,15 +145,39 @@ int main(int argc, char* argv[]) {
             std::cout << "XML saved in new_tree.xml." << std::endl;
         }
         else {
-            std::cout << "Error while saving XML" << std::endl;
+            std::cerr << "Error while saving XML" << std::endl;
             return EXIT_FAILURE;
         }
 
         XMLResource::Iterator it(*resource);
 
-        while (it.hasNext()) {
+        while (!it.getCurrentElement().empty()) {
             std::cout << "Current Element: " << it.getCurrentElement() << std::endl;
             it.next();
+        }
+
+        XMLResource::Iterator foundElement = resource->find("li"); 
+
+        if (foundElement.hasNext()) {
+            std::cout << "Element found: " << foundElement.getCurrentElement() << std::endl;
+            std::string newElement = "<new_element>Content</new_element>";
+
+            if (resource->add(newElement, foundElement)) {
+                std::cout << "New element added successfully." << std::endl;
+            }
+            else {
+                std::cout << "Error adding the new element." << std::endl;
+            }
+
+            if (resource->erase(foundElement)) {
+                std::cout << "Element erased successfully." << std::endl;
+            }
+            else {
+                std::cout << "Error erasing the element." << std::endl;
+            }
+        }
+        else {
+            std::cout << "Element not found." << std::endl;
         }
     }
     catch (const std::exception& e) {
