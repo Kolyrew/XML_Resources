@@ -19,10 +19,13 @@ public:
     bool load(const std::string& filename) {
         std::ifstream file(filename);
         if (file.is_open()) {
+            std::string temp_data;
             std::stringstream buffer;
             buffer << file.rdbuf();
-            xml_data = buffer.str();
+            temp_data = buffer.str();
             file.close();
+
+            xml_data = temp_data;
             return true;
         }
         else {
@@ -113,23 +116,29 @@ public:
     bool add(const std::string& element, XMLResource::Iterator position) {
         size_t pos = xml_data.find(position.getCurrentElement());
         if (pos != std::string::npos) {
-            xml_data.insert(pos, element);
+            std::string temp_data = xml_data;
+            temp_data.insert(pos, element);
+
+            xml_data = temp_data;
             return true;
         }
-        return false; 
+        return false;
     }
 
     bool erase(XMLResource::Iterator position) {
         size_t pos = xml_data.find(position.getCurrentElement());
         if (pos != std::string::npos) {
-            xml_data.erase(pos, position.getCurrentElement().size());
+            std::string temp_data = xml_data;
+            temp_data.erase(pos, position.getCurrentElement().size());
+
+            xml_data = temp_data;
             return true;
         }
-        return false; 
+        return false;
     }
 };
 
-int main(int argc, const char* argv[]) {
+int32_t main(const int32_t argc, const char* const argv[]) {
     try {
         auto resource = XMLResource::create();
 
@@ -156,7 +165,7 @@ int main(int argc, const char* argv[]) {
             it.next();
         }
 
-        XMLResource::Iterator foundElement = resource->find("li"); 
+        XMLResource::Iterator foundElement = resource->find("li");
 
         if (foundElement.hasNext()) {
             std::cout << "Element found: " << foundElement.getCurrentElement() << std::endl;
